@@ -18,6 +18,7 @@
 {{end}}
 [Original Reply]({{.URL}})
 <img width="32" alt="image" src="{{.Author.AvatarURL}}"> [{{.Author.Login}}](https://github.com/{{.Author.Login}}) <a href="#{{.ID}}" id="{{.ID}}">{{.CreatedAt}}</a> ⬆️ {{.UpvoteCount}} {{range .Reactions}}{{.Emoji}} {{.Count}} {{end}}
+
 {{.Body}}
 {{if .IsMinimized}}</details>{{end}}
 {{end}}
