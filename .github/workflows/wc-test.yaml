@@ -2,10 +2,11 @@
 name: wc-test
 on:
   workflow_call:
-    inputs:
-      docker_is_changed:
-        required: false
-        type: boolean
+    secrets:
+      gh_app_id:
+        required: true
+      gh_app_private_key:
+        required: true
 
 jobs:
   test:
@@ -24,3 +25,45 @@ jobs:
         env:
           AQUA_GITHUB_TOKEN: ${{github.token}}
       - run: go test -v ./... -race -covermode=atomic
+      - run: go install ./cmd/ghd2i
+      - run: ghd2i version -json
+      - run: ghd2i get-discussion https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1 > discussions.json
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+
+      - name: dry run
+        run: ghd2i run -repo-name test-ghd2i -data discussions.json -dry-run
+        if: |
+          !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+
+      - uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
+        id: token
+        if: |
+          !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+        with:
+          app_id: ${{secrets.gh_app_id}}
+          private_key: ${{secrets.gh_app_private_key}}
+          permissions: >-
+            {
+              "issues": "write"
+            }
+          repositories: >-
+            [
+              "test-ghd2i"
+            ]
+      - run: ghd2i run -data discussions.json
+        if: |
+          !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+        env:
+          GITHUB_TOKEN: ${{steps.token.outputs.token}}
+
+      - run: ghd2i run -lock never -close never https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1
+        if: |
+          !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+        env:
+          GITHUB_TOKEN: ${{steps.token.outputs.token}}
+
+      - run: ghd2i create-config
+      - run: cat ghd2i.yaml
