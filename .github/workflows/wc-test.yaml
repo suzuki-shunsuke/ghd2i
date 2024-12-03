@@ -53,13 +53,13 @@ jobs:
             [
               "test-ghd2i"
             ]
-      - run: ghd2i run -repo-name test-ghd2i -data discussions.json
+      - run: ghd2i run -data discussions.json
         if: |
           !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
         env:
           GITHUB_TOKEN: ${{steps.token.outputs.token}}
 
-      - run: ghd2i run -repo-name test-ghd2i
+      - run: ghd2i run -lock never -close never https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1
         if: |
           !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
         env:
