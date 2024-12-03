@@ -10,7 +10,7 @@ Category: {{.Category.Emoji}} {{.Category.Name}}
 {{.Body}}
 
 {{if .Poll}}
-## {{.Category.Emoji}} Poll question: {{.Poll.Question}}
+## {{.Category.Emoji}} {{.Poll.Question}}
 
 Poll Option | Vote Count
 --- | ---
