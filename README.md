@@ -189,6 +189,18 @@ comment_template: |+
 Each discussion in data is passed to `issue_template`.
 Each discussion comment in data is passed to `comment_template`.
 
+## Q. Why not using GitHub's native feature `Create issue from discussion`?
+
+GitHub provides a Web UI to create an issue from a discussion.
+
+<img width="254" alt="image" src="https://github.com/user-attachments/assets/2899fc15-3c6b-4ea0-8d3a-65d162032c67">
+
+But we think this feature is very poor.
+
+This feature doesn't create issue comments from discussion comments and replies.
+
+So we've developed ghd2i.
+
 ## LICENSE
 
 [MIT](LICENSE)
