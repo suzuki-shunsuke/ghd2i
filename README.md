@@ -9,6 +9,12 @@ ghd2i run [<discussion url> ...]
 
 <img width="971" alt="image" src="https://github.com/user-attachments/assets/acb9019a-bc2d-4676-aa02-5407ccc854ab">
 
+## Install
+
+```sh
+go install github.com/suzuki-shunsuke/ghd2i/cmd/ghd2i@latest
+```
+
 ## GitHub Access Token
 
 ghd2i requires a GitHub Access Token to get discussions and create and edit issues.
