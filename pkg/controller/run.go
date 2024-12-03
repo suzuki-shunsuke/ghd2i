@@ -160,7 +160,9 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 		repoName = param.RepoName
 	}
 	// Create an issue by GitHub GraphQL API.
-	labels := append(discussion.Labels, param.Labels...)
+	labels := make([]string, len(discussion.Labels), len(discussion.Labels)+len(param.Labels))
+	copy(labels, discussion.Labels)
+	labels = append(labels, param.Labels...)
 	issueNum, issueURL, err := c.gh.CreateIssue(ctx, repoOwner, repoName, &github.IssueRequest{
 		Title:  &discussion.Title,
 		Body:   &issueBody,
