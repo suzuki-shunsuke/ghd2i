@@ -13,7 +13,7 @@ command_console() {
 }
 
 commands() {
-  for cmd in add completion; do
+  for cmd in run create-config get-discussion version completion; do
     echo "
 ## ghd2i $cmd
 

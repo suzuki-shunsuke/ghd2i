@@ -62,7 +62,7 @@ brews:
     # Template of your app's description.
     # Default is empty.
     description: |
-      Add GitHub Issues and Pull Requests to GitHub Projects
+      Create GitHub Issues from GitHub Discussions
     license: MIT
 
     # Setting this will prevent goreleaser to actually try to commit the updated
@@ -88,7 +88,7 @@ brews:
 scoops:
   -
     description: |
-      Add GitHub Issues and Pull Requests to GitHub Projects
+      Create GitHub Issues from GitHub Discussions
     license: MIT
     skip_upload: auto
     repository:
