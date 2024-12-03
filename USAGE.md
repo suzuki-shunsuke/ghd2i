@@ -5,13 +5,13 @@
 ```console
 $ ghd2i help
 NAME:
-   ghd2i - A new cli application
+   ghd2i - Create GitHub Issues from GitHub Discussions
 
 USAGE:
    ghd2i [global options] command [command options]
 
 VERSION:
-   0.1.0 (6bebd9eb3658e151ced8ecd9939994e0b21273d5)
+   0.1.2 (d6fedf8712d280f07f6fce5d42821c8c048062fc)
 
 COMMANDS:
    version         Show version
@@ -45,14 +45,17 @@ DESCRIPTION:
 
 
 OPTIONS:
-   --config value, -c value  configuration file path. Configuration file is optional. If \.ghd2i.yaml exists, it's used as the configuration file by default
-   --data value              data file path. If data file path is set, the data is read from the file instead of calling GitHub API
-   --lock value              Whether created issues are locked. One of 'auto', 'always', 'never'. Auto means that the issue is locked if the discussion is locked (default: "auto")
-   --close value             Whether created issues are closed. One of 'auto', 'always', 'never'. Auto means that the issue is closed if the discussion is closed (default: "auto")
-   --repo-owner value        Repository owner where issues are created. By default, issues are created in the repository of each discussion
-   --repo-name value         Repository name where issues are created. By default, issues are created in the repository of each discussion
-   --dry-run                 Instead of creating issues, output issue body and comment bodies (default: false)
-   --help, -h                show help
+   --config value, -c value                                   configuration file path. Configuration file is optional. If \.ghd2i.yaml exists, it's used as the configuration file by default
+   --data value                                               data file path. If data file path is set, the data is read from the file instead of calling GitHub API
+   --lock value                                               Whether created issues are locked. One of 'auto', 'always', 'never'. Auto means that the issue is locked if the discussion is locked (default: "auto")
+   --close value                                              Whether created issues are closed. One of 'auto', 'always', 'never'. Auto means that the issue is closed if the discussion is closed (default: "auto")
+   --repo-owner value                                         Repository owner where issues are created. By default, issues are created in the repository of each discussion
+   --repo-name value                                          Repository name where issues are created. By default, issues are created in the repository of each discussion
+   --query value, -q value                                    A query to search discussions
+   --label value, -l value [ --label value, -l value ]        Additional labels to created issues
+   --assignee value, -a value [ --assignee value, -a value ]  Assignees of created issues
+   --dry-run                                                  Instead of creating issues, output issue body and comment bodies (default: false)
+   --help, -h                                                 show help
 ```
 
 ## ghd2i create-config
@@ -92,7 +95,8 @@ DESCRIPTION:
 
 
 OPTIONS:
-   --help, -h  show help
+   --query value, -q value  A query to search discussions. 'is:discussions' is added to the query
+   --help, -h               show help
 ```
 
 ## ghd2i version
@@ -126,11 +130,11 @@ DESCRIPTION:
 
    e.g.
 
-   .bash_profile
+   .bashrc
 
-   source <(ghd2i completion bash)
+   eval "$(ghd2i completion bash)"
 
-   .zprofile
+   .zshrc
 
    source <(ghd2i completion zsh)
 
