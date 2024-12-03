@@ -24,6 +24,15 @@ Left: [Original Discussion](https://github.com/suzuki-shunsuke/test-ghd2i/discus
 ghd2i requires a GitHub Access Token to get discussions and create and edit issues.
 Please set the environment variable `GITHUB_TOKEN`.
 
+## Search Discussions
+
+You can search Discussions using `-query` option.
+`is:discussions` is added to the query.
+
+```sh
+ghd2i run -query "repo:suzuki-shunsuke/test-ghd2i is:open"
+```
+
 ## Output data
 
 By default, `ghd2i run` command gets discussion data via GitHub API.
@@ -35,6 +44,12 @@ This is useful when you customize and test templates.
 ghd2i get-discussion <discussion url> [<discussion url> ...] > discussion.json
 # Pass the data file
 ghd2i run -data discussion.json
+```
+
+`-query` is also available.
+
+```sh
+ghd2i get-discussion -query "repo:suzuki-shunsuke/test-ghd2i is:open" > discussions.json
 ```
 
 ### Data Format
