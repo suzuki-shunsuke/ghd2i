@@ -9,6 +9,12 @@ ghd2i run [<discussion url> ...]
 
 <img width="971" alt="image" src="https://github.com/user-attachments/assets/acb9019a-bc2d-4676-aa02-5407ccc854ab">
 
+## Install
+
+```sh
+go install github.com/suzuki-shunsuke/ghd2i/cmd/ghd2i@latest
+```
+
 ## GitHub Access Token
 
 ghd2i requires a GitHub Access Token to get discussions and create and edit issues.
@@ -188,6 +194,18 @@ comment_template: |+
 
 Each discussion in data is passed to `issue_template`.
 Each discussion comment in data is passed to `comment_template`.
+
+## Q. Why not using GitHub's native feature `Create issue from discussion`?
+
+GitHub provides a Web UI to create an issue from a discussion.
+
+<img width="254" alt="image" src="https://github.com/user-attachments/assets/2899fc15-3c6b-4ea0-8d3a-65d162032c67">
+
+But we think this feature is very poor.
+
+This feature doesn't create issue comments from discussion comments and replies.
+
+So we've developed ghd2i.
 
 ## LICENSE
 
