@@ -55,6 +55,11 @@ $ ghd2i run https://github.com/suzuki-shunsuke/test-github-action/discussions/55
 				Name:  "repo-name",
 				Usage: "Repository name where issues are created. By default, issues are created in the repository of each discussion",
 			},
+			&cli.StringFlag{
+				Name:    "query",
+				Aliases: []string{"q"},
+				Usage:   "A query to search discussions",
+			},
 			&cli.StringSliceFlag{
 				Name:    "label",
 				Aliases: []string{"l"},
@@ -89,6 +94,7 @@ func (rc *runCommand) action(c *cli.Context) error {
 		Lock:           c.String("lock"),
 		RepoOwner:      c.String("repo-owner"),
 		RepoName:       c.String("repo-name"),
+		Query:          c.String("query"),
 		Labels:         c.StringSlice("label"),
 		Assignees:      c.StringSlice("assignee"),
 		DryRun:         c.Bool("dry-run"),

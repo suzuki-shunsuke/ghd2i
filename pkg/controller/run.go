@@ -23,6 +23,7 @@ type Param struct {
 	Lock           string
 	RepoOwner      string
 	RepoName       string
+	Query          string
 	Args           []string
 	Labels         []string
 	Assignees      []string
@@ -42,6 +43,7 @@ type GitHub interface {
 	MinimizeComment(ctx context.Context, nodeID string) error
 	LockIssue(ctx context.Context, owner, name string, number int, lockReason string) error
 	CloseIssue(ctx context.Context, owner, name string, number int) error
+	SearchDiscussions(ctx context.Context, query string) ([]string, error)
 }
 
 type ParamDiscussion struct {
@@ -57,6 +59,10 @@ var issueBodyTplByte []byte
 var issueCommentBodyTplByte []byte
 
 func (c *Controller) Run(ctx context.Context, logE *logrus.Entry, param *Param) error { //nolint:cyclop
+	if param.Query == "" && param.DataFilePath == "" && len(param.Args) == 0 {
+		logE.Warn("no discussion is specified. One of -query, -data, or discussion URLs are required")
+		return nil
+	}
 	cfg := &Config{}
 	if err := findAndReadConfig(c.fs, cfg, param.ConfigFilePath); err != nil {
 		return fmt.Errorf("find and read a configuration file: %w", err)
@@ -80,9 +86,19 @@ func (c *Controller) Run(ctx context.Context, logE *logrus.Entry, param *Param) 
 		if failed {
 			return errors.New("failed to handle some discussions")
 		}
-		return nil
 	}
-	for _, arg := range param.Args {
+	args := param.Args
+	if param.Query != "" {
+		// search discussions by GitHub GraphQL API
+		urls, err := c.gh.SearchDiscussions(ctx, "is:discussions "+param.Query)
+		if err != nil {
+			return fmt.Errorf("search discussions: %w", err)
+		}
+		args = make([]string, len(param.Args), len(param.Args)+len(urls))
+		copy(args, param.Args)
+		args = append(args, urls...)
+	}
+	for _, arg := range args {
 		logE := logE.WithField("arg", arg)
 		discussion, err := c.getDiscussion(ctx, arg)
 		if err != nil {

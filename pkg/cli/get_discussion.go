@@ -25,6 +25,13 @@ func (rc *getDiscussionCommand) command() *cli.Command {
 $ ghd2i get-discussion <discussion-url> [<discussion-url> ...]
 `,
 		Action: rc.action,
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "query",
+				Aliases: []string{"q"},
+				Usage:   "A query to search discussions. 'is:discussions' is added to the query",
+			},
+		},
 	}
 }
 
@@ -35,6 +42,7 @@ func (rc *getDiscussionCommand) action(c *cli.Context) error {
 		return fmt.Errorf("initialize a controller: %w", err)
 	}
 	return ctrl.GetDiscussion(c.Context, rc.logE, &controller.Param{ //nolint:wrapcheck
-		Args: c.Args().Slice(),
+		Args:  c.Args().Slice(),
+		Query: c.String("query"),
 	})
 }

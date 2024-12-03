@@ -10,8 +10,19 @@ import (
 )
 
 func (c *Controller) GetDiscussion(ctx context.Context, _ *logrus.Entry, param *Param) error {
-	discussions := make([]*Discussion, len(param.Args))
-	for i, arg := range param.Args {
+	args := param.Args
+	if param.Query != "" {
+		// search discussions by GitHub GraphQL API
+		urls, err := c.gh.SearchDiscussions(ctx, "is:discussions "+param.Query)
+		if err != nil {
+			return fmt.Errorf("search discussions: %w", err)
+		}
+		args = make([]string, len(param.Args), len(param.Args)+len(urls))
+		copy(args, param.Args)
+		args = append(args, urls...)
+	}
+	discussions := make([]*Discussion, len(args))
+	for i, arg := range args {
 		d, err := c.getDiscussion(ctx, arg)
 		if err != nil {
 			return err
