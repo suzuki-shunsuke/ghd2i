@@ -68,6 +68,9 @@ jobs:
     uses: ./.github/workflows/wc-test.yaml
     needs: path-filter
     permissions: {}
+    secrets:
+      gh_app_id: ${{secrets.APP_ID}}
+      gh_app_private_key: ${{secrets.APP_PRIVATE_KEY}}
 
   go-mod-tidy:
     uses: ./.github/workflows/wc-go-mod-tidy.yaml
