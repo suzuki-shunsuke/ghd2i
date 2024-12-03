@@ -19,3 +19,18 @@ func (c *Client) GetDiscussion(ctx context.Context, owner, name string, number i
 	}
 	return q.Repository.Discussion, nil
 }
+
+func (c *Client) SearchDiscussions(ctx context.Context, query string) ([]string, error) {
+	q := &SearchQuery{}
+	variables := map[string]any{
+		"query": query,
+	}
+	if err := c.v4Client.Query(ctx, &q, variables); err != nil {
+		return nil, fmt.Errorf("get a discussion by GitHub GraphQL API: %w", err)
+	}
+	urls := make([]string, len(q.Search.Nodes))
+	for i, node := range q.Search.Nodes {
+		urls[i] = node.URL
+	}
+	return urls, nil
+}
