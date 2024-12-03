@@ -9,8 +9,7 @@ ghd2i run [<discussion url> ...]
 
 ## Examples
 
-- Left: [Original Discussion](https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1)
-- Right: [Created Issue](https://github.com/suzuki-shunsuke/test-ghd2i/issues/2)
+Left: [Original Discussion](https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1) | Right: [Created Issue](https://github.com/suzuki-shunsuke/test-ghd2i/issues/2)
 
 <img width="1539" alt="image" src="https://github.com/user-attachments/assets/d8d8cfb9-1c13-4eed-83ac-bba6e25e50c9">
 
