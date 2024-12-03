@@ -186,36 +186,6 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/suzuki-shunsuke/ghd2i/v0.1.2/ghd2i_darwin_amd64.tar.gz",
-      "checksum": "A4B1B2D18E82F0BDD957402974C365E4E3881BA620170DBE51283C0D8B963B55",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/suzuki-shunsuke/ghd2i/v0.1.2/ghd2i_darwin_arm64.tar.gz",
-      "checksum": "C52E1B841236E08FD5B6122940759AF25872F3DCE708D0013A99D4548468F7CD",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/suzuki-shunsuke/ghd2i/v0.1.2/ghd2i_linux_amd64.tar.gz",
-      "checksum": "956FC5BC7BBEF2ADCA763E16E333C2095BF4D9C232CE9BAC488579924490387A",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/suzuki-shunsuke/ghd2i/v0.1.2/ghd2i_linux_arm64.tar.gz",
-      "checksum": "11017DEE5B014AF376EA8B7EB2EC2406686F04AA1D3121AA14B9FB7C56D3F332",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/suzuki-shunsuke/ghd2i/v0.1.2/ghd2i_windows_amd64.zip",
-      "checksum": "1A5F75B729D357C94FA26BFD625934D218F1E251436B2594311CF0EFAE819F27",
-      "algorithm": "sha256"
-    },
-    {
-      "id": "github_release/github.com/suzuki-shunsuke/ghd2i/v0.1.2/ghd2i_windows_arm64.zip",
-      "checksum": "EA993B62EED421E798516B6E892F7F4B47F3B8CC346ED12A947454B0661897C6",
-      "algorithm": "sha256"
-    },
-    {
       "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.228.1/registry.yaml",
       "checksum": "4B1D07D29028737282D10C1789BE5946BD3FCA0F74232A03A95D1926A385FC7B",
       "algorithm": "sha256"
