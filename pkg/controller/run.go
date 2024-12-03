@@ -24,6 +24,7 @@ type Param struct {
 	RepoOwner      string
 	RepoName       string
 	Args           []string
+	Labels         []string
 	DryRun         bool
 }
 
@@ -159,10 +160,13 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 		repoName = param.RepoName
 	}
 	// Create an issue by GitHub GraphQL API.
+	labels := make([]string, len(discussion.Labels), len(discussion.Labels)+len(param.Labels))
+	copy(labels, discussion.Labels)
+	labels = append(labels, param.Labels...)
 	issueNum, issueURL, err := c.gh.CreateIssue(ctx, repoOwner, repoName, &github.IssueRequest{
 		Title:  &discussion.Title,
 		Body:   &issueBody,
-		Labels: &discussion.Labels,
+		Labels: &labels,
 	})
 	if err != nil {
 		return fmt.Errorf("create an Issue: %w", err)
