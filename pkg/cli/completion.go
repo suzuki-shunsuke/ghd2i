@@ -23,11 +23,11 @@ Source the output to enable completion.
 
 e.g.
 
-.bash_profile
+.bashrc
 
-source <(ghd2i completion bash)
+eval "$(ghd2i completion bash)"
 
-.zprofile
+.zshrc
 
 source <(ghd2i completion zsh)
 
