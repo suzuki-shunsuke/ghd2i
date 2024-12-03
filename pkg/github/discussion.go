@@ -148,6 +148,22 @@ type Discussion struct {
 	Answer         *Answer
 	Category       *Category
 	Comments       *Comments `graphql:"comments(first:100)"`
+	Poll           *Poll
+}
+
+type Poll struct {
+	Question       string
+	TotalVoteCount int
+	Options        *Options `graphql:"options(first:100)"`
+}
+
+type Options struct {
+	Nodes []*Option
+}
+
+type Option struct {
+	Option         string
+	TotalVoteCount int
 }
 
 type User struct {

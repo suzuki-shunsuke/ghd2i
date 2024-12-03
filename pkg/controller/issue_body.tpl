@@ -9,4 +9,14 @@ Category: {{.Category.Emoji}} {{.Category.Name}}
 
 {{.Body}}
 
+{{if .Poll}}
+## {{.Category.Emoji}} Poll question: {{.Poll.Question}}
+
+Poll Option | Vote Count
+--- | ---
+{{range .Poll.Options -}}
+{{.Option}} | {{.TotalVoteCount}}
+{{end}}
+{{end}}
+
 _[This issue was created by ghd2i](https://github.com/suzuki-shunsuke/ghd2i)_
