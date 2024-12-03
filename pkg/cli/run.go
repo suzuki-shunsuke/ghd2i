@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -69,7 +70,7 @@ func (rc *runCommand) action(c *cli.Context) error {
 	gh := github.New(c.Context, os.Getenv("GITHUB_TOKEN"))
 	ctrl, err := controller.New(rc.stdout, gh, afero.NewOsFs())
 	if err != nil {
-		return err
+		return fmt.Errorf("initialize a controller: %w", err)
 	}
 	return ctrl.Run(c.Context, logE, &controller.Param{ //nolint:wrapcheck
 		ConfigFilePath: c.String("config"),

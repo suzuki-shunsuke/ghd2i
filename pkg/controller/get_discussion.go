@@ -3,12 +3,13 @@ package controller
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/sirupsen/logrus"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/github"
 )
 
-func (c *Controller) GetDiscussion(ctx context.Context, logE *logrus.Entry, param *Param) error {
+func (c *Controller) GetDiscussion(ctx context.Context, _ *logrus.Entry, param *Param) error {
 	discussions := make([]*Discussion, len(param.Args))
 	for i, arg := range param.Args {
 		d, err := c.getDiscussion(ctx, arg)
@@ -22,7 +23,7 @@ func (c *Controller) GetDiscussion(ctx context.Context, logE *logrus.Entry, para
 	if err := encoder.Encode(&Discussions{
 		Discussions: discussions,
 	}); err != nil {
-		return err
+		return fmt.Errorf("output discussions as JSON: %w", err)
 	}
 	return nil
 }
@@ -36,7 +37,7 @@ func (c *Controller) getDiscussion(ctx context.Context, arg string) (*Discussion
 	// Get a discussion by GitHub GraphQL API.
 	d, err := c.gh.GetDiscussion(ctx, pd.Owner, pd.Name, pd.Number)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get a discussion by GitHub API: %w", err)
 	}
 	discussion := convertDiscussion(d)
 	discussion.Repo = &Repository{
@@ -145,7 +146,7 @@ func convertReactions(in *github.Reactions) map[string]*Reaction {
 				Emoji: emoji,
 			}
 		}
-		a.Count += 1
+		a.Count++
 		m[emoji] = a
 	}
 	return m

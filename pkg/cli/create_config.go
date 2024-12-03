@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/spf13/afero"
@@ -24,10 +25,10 @@ $ ghd2i create-config
 	}
 }
 
-func (rc *createConfigCommand) action(c *cli.Context) error {
+func (rc *createConfigCommand) action(_ *cli.Context) error {
 	ctrl, err := controller.New(rc.stdout, nil, afero.NewOsFs())
 	if err != nil {
-		return err
+		return fmt.Errorf("initialize a controller: %w", err)
 	}
-	return ctrl.CreateConfig()
+	return ctrl.CreateConfig() //nolint:wrapcheck
 }

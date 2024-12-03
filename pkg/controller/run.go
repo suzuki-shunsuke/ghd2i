@@ -53,7 +53,7 @@ var issueBodyTplByte []byte
 //go:embed issue_comment.tpl
 var issueCommentBodyTplByte []byte
 
-func (c *Controller) Run(ctx context.Context, logE *logrus.Entry, param *Param) error {
+func (c *Controller) Run(ctx context.Context, logE *logrus.Entry, param *Param) error { //nolint:cyclop
 	cfg := &Config{}
 	if err := findAndReadConfig(c.fs, cfg, param.ConfigFilePath); err != nil {
 		return fmt.Errorf("find and read a configuration file: %w", err)
@@ -130,7 +130,7 @@ func parseArg(arg string) (*ParamDiscussion, error) {
 	}, nil
 }
 
-func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, discussion *Discussion) error {
+func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, discussion *Discussion) error { //nolint:funlen,cyclop
 	// Render issue and comments based on templates.
 	buf := &bytes.Buffer{}
 	if err := c.issueBody.Execute(buf, discussion); err != nil {

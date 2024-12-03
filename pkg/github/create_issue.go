@@ -22,7 +22,7 @@ func (c *Client) CreateIssue(ctx context.Context, owner, repo string, req *githu
 	// https://docs.github.com/en/rest/issues/issues#create-an-issue
 	issue, _, err := c.v3Client.Issues.Create(ctx, owner, repo, req)
 	if err != nil {
-		return 0, "", err
+		return 0, "", err //nolint:wrapcheck
 	}
 	return issue.GetNumber(), issue.GetHTMLURL(), nil
 }
@@ -31,7 +31,7 @@ func (c *Client) CreateIssueComment(ctx context.Context, owner, name string, num
 	// https://pkg.go.dev/github.com/google/go-github/v67/github#IssuesService.CreateComment
 	comment, _, err := c.v3Client.Issues.CreateComment(ctx, owner, name, number, req)
 	if err != nil {
-		return "", err
+		return "", err //nolint:wrapcheck
 	}
 	return comment.GetNodeID(), nil
 }
@@ -65,7 +65,7 @@ func (c *Client) CloseIssue(ctx context.Context, owner, name string, number int)
 		State: String("closed"),
 	})
 	if err != nil {
-		return err
+		return err //nolint:wrapcheck
 	}
 	return nil
 }
@@ -76,7 +76,7 @@ func (c *Client) LockIssue(ctx context.Context, owner, name string, number int, 
 		LockReason: lockReason,
 	})
 	if err != nil {
-		return err
+		return err //nolint:wrapcheck
 	}
 	return nil
 }
