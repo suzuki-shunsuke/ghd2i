@@ -134,6 +134,7 @@ type Discussion struct {
 	ID             string
 	Title          string
 	Body           string
+	URL            string
 	Locked         bool
 	Closed         bool
 	ClosedAt       string
@@ -171,6 +172,7 @@ type Comments struct {
 type Comment struct {
 	ID          string
 	Body        string
+	URL         string
 	Author      *User
 	CreatedAt   string
 	Reactions   *Reactions `graphql:"reactions(first:10)"`
@@ -188,6 +190,7 @@ type Replies struct {
 type Reply struct {
 	ID          string
 	Body        string
+	URL         string
 	UpvoteCount int
 	Reactions   *Reactions `graphql:"reactions(first:10)"`
 	Author      *User

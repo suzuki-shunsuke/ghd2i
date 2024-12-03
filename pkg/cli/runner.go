@@ -50,7 +50,7 @@ func (r *Runner) Run(ctx context.Context, args ...string) error {
 				logE:   r.LogE,
 				stdout: r.Stdout,
 			}).command(),
-			(&outputTemplateCommand{
+			(&createConfigCommand{
 				stdout: r.Stdout,
 			}).command(),
 			(&getDiscussionCommand{

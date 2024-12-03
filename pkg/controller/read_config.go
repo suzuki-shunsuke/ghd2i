@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/afero"
@@ -22,9 +23,12 @@ func findConfig(fs afero.Fs, p string) (afero.File, error) {
 	return fs.Open(".ghd2i.yaml") //nolint:wrapcheck
 }
 
-func findAndReadConfig(fs afero.Fs, cfg *Config, param *Param) error {
-	f, err := findConfig(fs, param.ConfigFilePath)
+func findAndReadConfig(fs afero.Fs, cfg *Config, path string) error {
+	f, err := findConfig(fs, path)
 	if err != nil {
+		if errors.Is(err, afero.ErrFileNotFound) {
+			return nil
+		}
 		return fmt.Errorf("find a configuration file: %w", err)
 	}
 	defer f.Close()

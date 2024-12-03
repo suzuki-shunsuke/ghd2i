@@ -1,30 +1,193 @@
-# ghd2i
+# ghd2i - GitHub Discussions to Issues
 
-CLI to create GitHub Issues from GitHub Discussions
-
-```sh
-ghd2i run [-dry-run] [-data <data file>] [<discussion url> ...]
-```
-
-Output default templates:
+ghd2i is a CLI to create GitHub Issues from GitHub Discussions.
+This is useful when you want to convert discussions to issues.
 
 ```sh
-ghd2i output-template (out)
+ghd2i run [<discussion url> ...]
 ```
 
-Output discussion data:
+<img width="971" alt="image" src="https://github.com/user-attachments/assets/acb9019a-bc2d-4676-aa02-5407ccc854ab">
+
+## GitHub Access Token
+
+ghd2i requires a GitHub Access Token to get discussions and create and edit issues.
+Please set the environment variable `GITHUB_TOKEN`.
+
+## Output data
+
+By default, `ghd2i run` command gets discussion data via GitHub API.
+You can dump the data to a data file by `ghd2i get-discussion` command and pass it to `ghd2i run` command.
+This is useful when you customize and test templates.
 
 ```sh
-ghd2i get-discussion (get) <discussion url> [<discussion url> ...]
+# Dump data to a data file
+ghd2i get-discussion <discussion url> [<discussion url> ...] > discussion.json
+# Pass the data file
+ghd2i run -data discussion.json
 ```
+
+### Data Format
+
+<details>
+<summary>Example data</summary>
 
 ```json
 {
-  "discussions": [
-    {}
+  "Discussions": [
+    {
+      "ID": "D_kwDODTmpTc4APQPc",
+      "Title": "test",
+      "Body": "test discussion",
+      "URL": "https://github.com/suzuki-shunsuke/test-github-action/discussions/54",
+      "ClosedAt": "2024-12-02T22:44:10Z",
+      "CreatedAt": "2022-04-10T01:15:58Z",
+      "UpdatedAt": "2024-12-02T22:44:27Z",
+      "AnswerChosenAt": "2022-04-10T01:24:57Z",
+      "UpvoteCount": 1,
+      "Repo": {
+        "Owner": "suzuki-shunsuke",
+        "Name": "test-github-action"
+      },
+      "Author": {
+        "Login": "suzuki-shunsuke",
+        "AvatarURL": "https://avatars.githubusercontent.com/u/13323303?u=afedf0091bfd70a6a79c55f6aca781c94cb862f7\u0026v=4"
+      },
+      "Category": {
+        "Name": "Q\u0026A",
+        "Emoji": ":pray:"
+      },
+      "Comments": [
+        {
+          "ID": "DC_kwDODTmpTc4AJrky",
+          "Body": "test comment",
+          "URL": "https://github.com/suzuki-shunsuke/test-github-action/discussions/54#discussioncomment-2537778",
+          "Author": {
+            "Login": "suzuki-shunsuke",
+            "AvatarURL": "https://avatars.githubusercontent.com/u/13323303?u=afedf0091bfd70a6a79c55f6aca781c94cb862f7\u0026v=4"
+          },
+          "CreatedAt": "2022-04-10T01:19:33Z",
+          "Reactions": {
+            "👍": {
+              "Emoji": "👍",
+              "Count": 1
+            },
+            "😕": {
+              "Emoji": "😕",
+              "Count": 1
+            }
+          },
+          "Replies": [
+            {
+              "ID": "DC_kwDODTmpTc4AJrk2",
+              "Body": "test reply",
+              "URL": "https://github.com/suzuki-shunsuke/test-github-action/discussions/54#discussioncomment-2537782",
+              "UpvoteCount": 0,
+              "Reactions": {},
+              "Author": {
+                "Login": "suzuki-shunsuke",
+                "AvatarURL": "https://avatars.githubusercontent.com/u/13323303?u=afedf0091bfd70a6a79c55f6aca781c94cb862f7\u0026v=4"
+              },
+              "CreatedAt": "2022-04-10T01:21:03Z",
+              "IsAnswer": false,
+              "IsMinimized": false
+            }
+          ],
+          "UpvoteCount": 1,
+          "IsAnswer": true,
+          "IsMinimized": false
+        },
+        {
+          "ID": "DC_kwDODTmpTc4AJtD_",
+          "Body": "test comment 2",
+          "URL": "https://github.com/suzuki-shunsuke/test-github-action/discussions/54#discussioncomment-2543871",
+          "Author": {
+            "Login": "suzuki-shunsuke",
+            "AvatarURL": "https://avatars.githubusercontent.com/u/13323303?u=afedf0091bfd70a6a79c55f6aca781c94cb862f7\u0026v=4"
+          },
+          "CreatedAt": "2022-04-11T11:07:27Z",
+          "Reactions": {},
+          "Replies": [],
+          "UpvoteCount": 1,
+          "IsAnswer": false,
+          "IsMinimized": false
+        }
+      ],
+      "Labels": [
+        "foo",
+        "aws/terraform-ci"
+      ],
+      "Answer": {
+        "ID": "DC_kwDODTmpTc4AJrky",
+        "Body": "test comment",
+        "CreatedAt": "2022-04-10T01:19:33Z",
+        "UpvoteCount": 1,
+        "Author": {
+          "Login": "suzuki-shunsuke",
+          "AvatarURL": "https://avatars.githubusercontent.com/u/13323303?u=afedf0091bfd70a6a79c55f6aca781c94cb862f7\u0026v=4"
+        },
+        "Reactions": {
+          "👍": {
+            "Emoji": "👍",
+            "Count": 1
+          },
+          "😕": {
+            "Emoji": "😕",
+            "Count": 1
+          }
+        }
+      },
+      "Reactions": {},
+      "Locked": true,
+      "Closed": true
+    }
   ]
 }
 ```
+
+</details>
+
+## Customize templates
+
+You can customize templates of issue body and issue comments.
+
+Create a configuration file:
+
+```sh
+ghd2i create-config
+```
+
+Please edit the generated configuration file as you like.
+
+Before creating issues, you can test the configuration by `-dry-run` option:
+
+```sh
+ghd2i run -dry-run [-data <data file>] [<discussion url> ...]
+```
+
+## Configuration file
+
+Configuration file is optional.
+By default, if a file `\.ghd2i.yaml` exists, it's used as a configuration file.
+You can also specify the configuration file by `-config` option.
+
+```sh
+ghd2i run -config config.yaml <discussion url>
+```
+
+Templates are parsed using [Go's text/template](https://pkg.go.dev/text/template).
+
+```yaml
+issue_template: |
+  A template of issue body.
+  This is parsed using Go's text/template.
+comment_template: |+
+  A template of issue comments.
+  This is parsed using Go's text/template.
+```
+
+Each discussion in data is passed to `issue_template`.
+Each discussion comment in data is passed to `comment_template`.
 
 ## LICENSE
 

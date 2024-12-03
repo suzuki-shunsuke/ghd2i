@@ -30,15 +30,33 @@ $ ghd2i run https://github.com/suzuki-shunsuke/test-github-action/discussions/55
 			&cli.StringFlag{
 				Name:    "config",
 				Aliases: []string{"c"},
-				Usage:   "configuration file path",
+				Usage:   "configuration file path. Configuration file is optional. If \\.ghd2i.yaml exists, it's used as the configuration file by default",
 			},
 			&cli.StringFlag{
 				Name:  "data",
-				Usage: "data file path",
+				Usage: "data file path. If data file path is set, the data is read from the file instead of calling GitHub API",
+			},
+			&cli.StringFlag{
+				Name:  "lock",
+				Usage: "Whether created issues are locked. One of 'auto', 'always', 'never'. Auto means that the issue is locked if the discussion is locked",
+				Value: "auto",
+			},
+			&cli.StringFlag{
+				Name:  "close",
+				Usage: "Whether created issues are closed. One of 'auto', 'always', 'never'. Auto means that the issue is closed if the discussion is closed",
+				Value: "auto",
+			},
+			&cli.StringFlag{
+				Name:  "repo-owner",
+				Usage: "Repository owner where issues are created. By default, issues are created in the repository of each discussion",
+			},
+			&cli.StringFlag{
+				Name:  "repo-name",
+				Usage: "Repository name where issues are created. By default, issues are created in the repository of each discussion",
 			},
 			&cli.BoolFlag{
 				Name:  "dry-run",
-				Usage: "dry run",
+				Usage: "Instead of creating issues, output issue body and comment bodies",
 			},
 		},
 	}
@@ -56,6 +74,10 @@ func (rc *runCommand) action(c *cli.Context) error {
 	return ctrl.Run(c.Context, logE, &controller.Param{ //nolint:wrapcheck
 		ConfigFilePath: c.String("config"),
 		DataFilePath:   c.String("data"),
+		Close:          c.String("close"),
+		Lock:           c.String("lock"),
+		RepoOwner:      c.String("repo-owner"),
+		RepoName:       c.String("repo-name"),
 		DryRun:         c.Bool("dry-run"),
 		Args:           c.Args().Slice(),
 	})

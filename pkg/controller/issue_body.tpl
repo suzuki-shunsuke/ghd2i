@@ -4,8 +4,9 @@
 
 <img width="32" alt="image" src="{{.Author.AvatarURL}}"> [{{.Author.Login}}](https://github.com/{{.Author.Login}}) {{.CreatedAt}} ⬆️ {{.UpvoteCount}} {{range .Reactions}}{{.Emoji}} {{.Count}} {{end}}
 
+[Original Discussion]({{.URL}})
 Category: {{.Category.Emoji}} {{.Category.Name}}
 
 {{.Body}}
 
-_[This comment is created by ghd2i](https://github.com/suzuki-shunsuke/ghd2i)_
+_[This issue was created by ghd2i](https://github.com/suzuki-shunsuke/ghd2i)_

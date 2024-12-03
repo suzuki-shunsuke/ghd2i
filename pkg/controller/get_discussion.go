@@ -38,7 +38,12 @@ func (c *Controller) getDiscussion(ctx context.Context, arg string) (*Discussion
 	if err != nil {
 		return nil, err
 	}
-	return convertDiscussion(d), nil
+	discussion := convertDiscussion(d)
+	discussion.Repo = &Repository{
+		Owner: pd.Owner,
+		Name:  pd.Name,
+	}
+	return discussion, nil
 }
 
 func convertLabels(in *github.Labels) []string {
@@ -56,15 +61,22 @@ type Discussions struct {
 	Discussions []*Discussion
 }
 
+type Repository struct {
+	Owner string
+	Name  string
+}
+
 type Discussion struct {
 	ID             string
 	Title          string
 	Body           string
+	URL            string
 	ClosedAt       string
 	CreatedAt      string
 	UpdatedAt      string
 	AnswerChosenAt string
 	UpvoteCount    int
+	Repo           *Repository
 	Author         *github.User
 	Category       *github.Category
 	Comments       []*Comment
@@ -80,6 +92,7 @@ func convertDiscussion(in *github.Discussion) *Discussion {
 		ID:             in.ID,
 		Title:          in.Title,
 		Body:           in.Body,
+		URL:            in.URL,
 		ClosedAt:       in.ClosedAt,
 		CreatedAt:      in.CreatedAt,
 		UpdatedAt:      in.UpdatedAt,
@@ -164,6 +177,7 @@ type Reaction struct {
 type Comment struct {
 	ID          string
 	Body        string
+	URL         string
 	Author      *github.User
 	CreatedAt   string
 	Reactions   map[string]*Reaction
@@ -182,6 +196,7 @@ func convertComments(in *github.Comments) []*Comment {
 		comments = append(comments, &Comment{
 			ID:          n.ID,
 			Body:        n.Body,
+			URL:         n.URL,
 			Author:      n.Author,
 			CreatedAt:   n.CreatedAt,
 			Reactions:   convertReactions(n.Reactions),
@@ -197,6 +212,7 @@ func convertComments(in *github.Comments) []*Comment {
 type Reply struct {
 	ID          string
 	Body        string
+	URL         string
 	UpvoteCount int
 	Reactions   map[string]*Reaction
 	Author      *github.User
@@ -214,6 +230,7 @@ func convertReplies(in *github.Replies) []*Reply {
 		replies[i] = &Reply{
 			ID:          n.ID,
 			Body:        n.Body,
+			URL:         n.URL,
 			UpvoteCount: n.UpvoteCount,
 			Reactions:   convertReactions(n.Reactions),
 			Author:      n.Author,

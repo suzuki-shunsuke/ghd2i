@@ -16,11 +16,11 @@ type Controller struct {
 }
 
 func New(stdout io.Writer, gh GitHub, fs afero.Fs) (*Controller, error) {
-	issueBodyTpl, err := template.New("_").Parse(string(issueBodyTplByte))
+	issueBodyTpl, err := parseTemplate(string(issueBodyTplByte))
 	if err != nil {
 		return nil, err
 	}
-	issueCommentBodyTpl, err := template.New("_").Parse(string(issueCommentBodyTplByte))
+	issueCommentBodyTpl, err := parseTemplate(string(issueCommentBodyTplByte))
 	if err != nil {
 		return nil, err
 	}
