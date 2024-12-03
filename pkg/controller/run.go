@@ -164,12 +164,15 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 	labels := make([]string, len(discussion.Labels), len(discussion.Labels)+len(param.Labels))
 	copy(labels, discussion.Labels)
 	labels = append(labels, param.Labels...)
-	issueNum, issueURL, err := c.gh.CreateIssue(ctx, repoOwner, repoName, &github.IssueRequest{
-		Title:     &discussion.Title,
-		Body:      &issueBody,
-		Labels:    &labels,
-		Assignees: &param.Assignees,
-	})
+	issueRequest := &github.IssueRequest{
+		Title:  &discussion.Title,
+		Body:   &issueBody,
+		Labels: &labels,
+	}
+	if param.Assignees != nil {
+		issueRequest.Assignees = &param.Assignees
+	}
+	issueNum, issueURL, err := c.gh.CreateIssue(ctx, repoOwner, repoName, issueRequest)
 	if err != nil {
 		return fmt.Errorf("create an Issue: %w", err)
 	}
