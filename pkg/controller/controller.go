@@ -13,6 +13,7 @@ type Controller struct {
 	fs               afero.Fs
 	issueBody        *template.Template
 	issueCommentBody *template.Template
+	title            *template.Template
 }
 
 func New(stdout io.Writer, gh GitHub, fs afero.Fs) (*Controller, error) {

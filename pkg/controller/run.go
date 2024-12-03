@@ -30,6 +30,7 @@ type Param struct {
 }
 
 type Config struct {
+	Title           string
 	IssueTemplate   string `yaml:"issue_template"`
 	CommentTemplate string `yaml:"comment_template"`
 }
@@ -60,19 +61,8 @@ func (c *Controller) Run(ctx context.Context, logE *logrus.Entry, param *Param) 
 	if err := findAndReadConfig(c.fs, cfg, param.ConfigFilePath); err != nil {
 		return fmt.Errorf("find and read a configuration file: %w", err)
 	}
-	if cfg.IssueTemplate != "" {
-		t, err := parseTemplate(cfg.IssueTemplate)
-		if err != nil {
-			return fmt.Errorf("parse an issue template in the configuration file: %w", err)
-		}
-		c.issueBody = t
-	}
-	if cfg.CommentTemplate != "" {
-		cmt, err := parseTemplate(cfg.CommentTemplate)
-		if err != nil {
-			return fmt.Errorf("parse a comment template in the configuration file: %w", err)
-		}
-		c.issueCommentBody = cmt
+	if err := c.parseTemplates(cfg); err != nil {
+		return err
 	}
 	failed := false
 	if param.DataFilePath != "" {
@@ -106,6 +96,31 @@ func (c *Controller) Run(ctx context.Context, logE *logrus.Entry, param *Param) 
 	}
 	if failed {
 		return errors.New("failed to handle some discussions")
+	}
+	return nil
+}
+
+func (c *Controller) parseTemplates(cfg *Config) error {
+	if cfg.IssueTemplate != "" {
+		t, err := parseTemplate(cfg.IssueTemplate)
+		if err != nil {
+			return fmt.Errorf("parse an issue template in the configuration file: %w", err)
+		}
+		c.issueBody = t
+	}
+	if cfg.CommentTemplate != "" {
+		cmt, err := parseTemplate(cfg.CommentTemplate)
+		if err != nil {
+			return fmt.Errorf("parse a comment template in the configuration file: %w", err)
+		}
+		c.issueCommentBody = cmt
+	}
+	if cfg.Title != "" {
+		title, err := parseTemplate(cfg.Title)
+		if err != nil {
+			return fmt.Errorf("parse a title template in the configuration file: %w", err)
+		}
+		c.title = title
 	}
 	return nil
 }
@@ -152,6 +167,14 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 		fmt.Fprintln(c.stdout, strings.Join(arr, "\n\n---\n\n"))
 		return nil
 	}
+	title := discussion.Title
+	if c.title != nil {
+		buf := &bytes.Buffer{}
+		if err := c.title.Execute(buf, discussion); err != nil {
+			return fmt.Errorf("render an issue title using a template engine: %w", err)
+		}
+		title = buf.String()
+	}
 	repoOwner := discussion.Repo.Owner
 	repoName := discussion.Repo.Name
 	if param.RepoOwner != "" {
@@ -165,7 +188,7 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 	copy(labels, discussion.Labels)
 	labels = append(labels, param.Labels...)
 	issueRequest := &github.IssueRequest{
-		Title:  &discussion.Title,
+		Title:  &title,
 		Body:   &issueBody,
 		Labels: &labels,
 	}
