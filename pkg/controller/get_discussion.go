@@ -95,6 +95,7 @@ type Discussion struct {
 	Labels         []string
 	Answer         *Answer
 	Reactions      map[string]*Reaction
+	Poll           *Poll
 	Locked         bool
 	Closed         bool
 }
@@ -116,9 +117,46 @@ func convertDiscussion(in *github.Discussion) *Discussion {
 		Labels:         convertLabels(in.Labels),
 		Answer:         convertAnswer(in.Answer),
 		Reactions:      convertReactions(in.Reactions),
+		Poll:           convertPoll(in.Poll),
 		Locked:         in.Locked,
 		Closed:         in.Closed,
 	}
+}
+
+type Poll struct {
+	Question       string
+	TotalVoteCount int
+	Options        []*Option
+}
+
+func convertPoll(in *github.Poll) *Poll {
+	if in == nil {
+		return nil
+	}
+	return &Poll{
+		Question:       in.Question,
+		TotalVoteCount: in.TotalVoteCount,
+		Options:        convertOptions(in.Options),
+	}
+}
+
+func convertOptions(in *github.Options) []*Option {
+	if in == nil {
+		return nil
+	}
+	options := make([]*Option, len(in.Nodes))
+	for i, n := range in.Nodes {
+		options[i] = &Option{
+			Option:         n.Option,
+			TotalVoteCount: n.TotalVoteCount,
+		}
+	}
+	return options
+}
+
+type Option struct {
+	Option         string
+	TotalVoteCount int
 }
 
 type Answer struct {

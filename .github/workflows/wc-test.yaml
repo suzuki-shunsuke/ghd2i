@@ -37,7 +37,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{github.token}}
       - name: Test get-discussion -query
-        run: ghd2i get-discussion -query 'repo:"suzuki-shunsuke/test-github-action" category:"foo bar" is:closed'
+        run: ghd2i get-discussion -query 'repo:"suzuki-shunsuke/test-ghd2i"'
         env:
           GITHUB_TOKEN: ${{github.token}}
 
