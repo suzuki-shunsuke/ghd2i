@@ -203,6 +203,7 @@ ghd2i run -config config.yaml <discussion url>
 Templates are parsed using [Go's text/template](https://pkg.go.dev/text/template).
 
 ```yaml
+title: A template of issue title. This is parsed using Go's text/template.
 issue_template: |
   A template of issue body.
   This is parsed using Go's text/template.
@@ -211,7 +212,7 @@ comment_template: |+
   This is parsed using Go's text/template.
 ```
 
-Each discussion in data is passed to `issue_template`.
+Each discussion in data is passed to `title` and `issue_template`.
 Each discussion comment in data is passed to `comment_template`.
 
 ## Close and Lock created Issues
@@ -229,6 +230,14 @@ e.g.
 
 ```sh
 ghd2i run -lock never -close always <discussion url>
+```
+
+## Add labels and assignees
+
+You can use `-label (-l)` and `-assignee (-a)` options.
+
+```sh
+ghd2i run -l foo -l bar -a suzuki-shunsuke -a octokit -query "repo:suzuki-shunsuke/test-ghd2i is:open"
 ```
 
 ## Q. Why not using GitHub's native feature `Create issue from discussion`?
