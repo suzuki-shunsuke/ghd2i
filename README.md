@@ -7,7 +7,15 @@ This is useful when you want to convert discussions to issues.
 ghd2i run [<discussion url> ...]
 ```
 
-<img width="971" alt="image" src="https://github.com/user-attachments/assets/acb9019a-bc2d-4676-aa02-5407ccc854ab">
+## Examples
+
+Left: [Original Discussion](https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1) | Right: [Created Issue](https://github.com/suzuki-shunsuke/test-ghd2i/issues/2)
+
+<img width="1539" alt="image" src="https://github.com/user-attachments/assets/d8d8cfb9-1c13-4eed-83ac-bba6e25e50c9">
+
+--
+
+<img width="1525" alt="image" src="https://github.com/user-attachments/assets/2edd5ab0-ac0a-478f-ae13-5217859eb2f4">
 
 ## Install
 
