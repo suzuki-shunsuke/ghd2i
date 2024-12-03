@@ -23,7 +23,8 @@ func (c *Client) GetDiscussion(ctx context.Context, owner, name string, number i
 func (c *Client) SearchDiscussions(ctx context.Context, query string) ([]string, error) {
 	var urls []string
 	variables := map[string]any{
-		"query": githubv4.String(query),
+		"query":  githubv4.String(query),
+		"cursor": (*githubv4.String)(nil),
 	}
 	for range 10 {
 		q := &SearchQuery{}
