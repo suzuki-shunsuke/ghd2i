@@ -14,6 +14,8 @@ ghd2i run [<discussion url> ...]
 
 <img width="1539" alt="image" src="https://github.com/user-attachments/assets/d8d8cfb9-1c13-4eed-83ac-bba6e25e50c9">
 
+--
+
 <img width="1525" alt="image" src="https://github.com/user-attachments/assets/2edd5ab0-ac0a-478f-ae13-5217859eb2f4">
 
 ## Install
