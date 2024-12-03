@@ -22,7 +22,7 @@ type SearchQuery struct {
 				URL string
 			} `graphql:"... on Discussion"`
 		}
-	} `graphql:"search(type:DISCUSSION, query: $query, first:100)"`
+	} `graphql:"search(type:DISCUSSION, query: $query, first:100, after: $cursor)"`
 }
 
 type PageInfo struct {
