@@ -30,7 +30,7 @@ func (r *Runner) Run(ctx context.Context, args ...string) error {
 	}
 	app := cli.App{
 		Name:     "ghd2i",
-		Usage:    "",
+		Usage:    "Create GitHub Issues from GitHub Discussions",
 		Version:  r.LDFlags.Version + " (" + r.LDFlags.Commit + ")",
 		Compiled: compiledDate,
 		Flags: []cli.Flag{
