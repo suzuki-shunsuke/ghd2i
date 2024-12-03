@@ -26,12 +26,22 @@ jobs:
           AQUA_GITHUB_TOKEN: ${{github.token}}
       - run: go test -v ./... -race -covermode=atomic
       - run: go install ./cmd/ghd2i
-      - run: ghd2i version -json
-      - run: ghd2i get-discussion https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1 > discussions.json
+      - name: Test help
+        run: ghd2i help
+      - name: Test version
+        run: ghd2i version
+      - name: Test version -json
+        run: ghd2i version -json
+      - name: Test get-discussion
+        run: ghd2i get-discussion https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1 > discussions.json
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      - name: Test get-discussion -query
+        run: ghd2i get-discussion -query 'repo:"suzuki-shunsuke/test-github-action" category:"foo bar" is:closed'
         env:
           GITHUB_TOKEN: ${{github.token}}
 
-      - name: dry run
+      - name: Test dry run
         run: ghd2i run -repo-name test-ghd2i -data discussions.json -dry-run
         if: |
           !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
@@ -53,17 +63,27 @@ jobs:
             [
               "test-ghd2i"
             ]
-      - run: ghd2i run -data discussions.json
+      - name: Test run -data
+        run: ghd2i run -data discussions.json
         if: |
           !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
         env:
           GITHUB_TOKEN: ${{steps.token.outputs.token}}
 
-      - run: ghd2i run -lock never -close never https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1
+      - name: Test run -query
+        run: ghd2i run -q 'repo:"suzuki-shunsuke/test-ghd2i"'
         if: |
           !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
         env:
           GITHUB_TOKEN: ${{steps.token.outputs.token}}
 
-      - run: ghd2i create-config
+      - name: Test -lock and -close options
+        run: ghd2i run -lock never -close never https://github.com/suzuki-shunsuke/test-ghd2i/discussions/1
+        if: |
+          !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+        env:
+          GITHUB_TOKEN: ${{steps.token.outputs.token}}
+
+      - name: Test create-config
+        run: ghd2i create-config
       - run: cat ghd2i.yaml
