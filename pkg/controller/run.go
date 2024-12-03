@@ -25,6 +25,7 @@ type Param struct {
 	RepoName       string
 	Args           []string
 	Labels         []string
+	Assignees      []string
 	DryRun         bool
 }
 
@@ -164,9 +165,10 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 	copy(labels, discussion.Labels)
 	labels = append(labels, param.Labels...)
 	issueNum, issueURL, err := c.gh.CreateIssue(ctx, repoOwner, repoName, &github.IssueRequest{
-		Title:  &discussion.Title,
-		Body:   &issueBody,
-		Labels: &labels,
+		Title:     &discussion.Title,
+		Body:      &issueBody,
+		Labels:    &labels,
+		Assignees: &param.Assignees,
 	})
 	if err != nil {
 		return fmt.Errorf("create an Issue: %w", err)
