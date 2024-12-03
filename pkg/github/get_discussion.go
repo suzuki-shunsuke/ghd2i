@@ -21,16 +21,22 @@ func (c *Client) GetDiscussion(ctx context.Context, owner, name string, number i
 }
 
 func (c *Client) SearchDiscussions(ctx context.Context, query string) ([]string, error) {
-	q := &SearchQuery{}
+	var urls []string
 	variables := map[string]any{
 		"query": githubv4.String(query),
 	}
-	if err := c.v4Client.Query(ctx, q, variables); err != nil {
-		return nil, fmt.Errorf("search discussions by GitHub GraphQL API: %w", err)
-	}
-	urls := make([]string, len(q.Search.Nodes))
-	for i, node := range q.Search.Nodes {
-		urls[i] = node.Discussion.URL
+	for range 10 {
+		q := &SearchQuery{}
+		if err := c.v4Client.Query(ctx, q, variables); err != nil {
+			return nil, fmt.Errorf("search discussions by GitHub GraphQL API: %w", err)
+		}
+		for _, node := range q.Search.Nodes {
+			urls = append(urls, node.Discussion.URL)
+		}
+		if !q.Search.PageInfo.HasNextPage {
+			return urls, nil
+		}
+		variables["cursor"] = q.Search.PageInfo.EndCursor
 	}
 	return urls, nil
 }
