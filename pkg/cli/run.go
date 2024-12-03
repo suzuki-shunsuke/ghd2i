@@ -60,6 +60,11 @@ $ ghd2i run https://github.com/suzuki-shunsuke/test-github-action/discussions/55
 				Aliases: []string{"l"},
 				Usage:   "Additional labels to created issues",
 			},
+			&cli.StringSliceFlag{
+				Name:    "assignee",
+				Aliases: []string{"a"},
+				Usage:   "Assignees of created issues",
+			},
 			&cli.BoolFlag{
 				Name:  "dry-run",
 				Usage: "Instead of creating issues, output issue body and comment bodies",
@@ -85,6 +90,7 @@ func (rc *runCommand) action(c *cli.Context) error {
 		RepoOwner:      c.String("repo-owner"),
 		RepoName:       c.String("repo-name"),
 		Labels:         c.StringSlice("label"),
+		Assignees:      c.StringSlice("assignee"),
 		DryRun:         c.Bool("dry-run"),
 		Args:           c.Args().Slice(),
 	})
