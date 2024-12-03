@@ -195,6 +195,23 @@ comment_template: |+
 Each discussion in data is passed to `issue_template`.
 Each discussion comment in data is passed to `comment_template`.
 
+## Close and Lock created Issues
+
+By default, ghd2i closes issues if discussions are closed.
+And it locks issues if discussion are locked.
+You can change this behaviour using `-lock` and `-close` option.
+These options accept the following values.
+
+- `auto` (default): closes and locks issues if discussions are closed and locks
+- `always`: closes and locks issues definitely
+- `never`: never closes and locks issues
+
+e.g.
+
+```sh
+ghd2i run -lock never -close always <discussion url>
+```
+
 ## Q. Why not using GitHub's native feature `Create issue from discussion`?
 
 GitHub provides a Web UI to create an issue from a discussion.
