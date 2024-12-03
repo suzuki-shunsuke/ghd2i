@@ -56,8 +56,9 @@ $ ghd2i run https://github.com/suzuki-shunsuke/test-github-action/discussions/55
 				Usage: "Repository name where issues are created. By default, issues are created in the repository of each discussion",
 			},
 			&cli.StringFlag{
-				Name:  "query",
-				Usage: "A query to search discussions",
+				Name:    "query",
+				Aliases: []string{"q"},
+				Usage:   "A query to search discussions",
 			},
 			&cli.StringSliceFlag{
 				Name:    "label",

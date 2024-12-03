@@ -6,21 +6,20 @@ query($query: String!) {
     discussionCount
     nodes {
       ... on Discussion {
-      url
-	}
+        url
+	    }
+    }
   }
 }
 */
 
 type SearchQuery struct {
-	Search *Search
-}
-
-type Search struct {
-	DiscussionCount int
-	Nodes           []*SearchNode `graphql:"... on Discussion"`
-}
-
-type SearchNode struct {
-	URL string
+	Search struct {
+		DiscussionCount int
+		Nodes           []struct {
+			Discussion struct {
+				URL string
+			} `graphql:"... on Discussion"`
+		}
+	} `graphql:"search(type:DISCUSSION, query: $query, first:100)"`
 }
