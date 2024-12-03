@@ -1,5 +1,7 @@
 # ghd2i - GitHub Discussions to Issues
 
+[MIT](LICENSE) | [Usage](USAGE.md)
+
 ghd2i is a CLI to create GitHub Issues from GitHub Discussions.
 This is useful when you want to convert discussions to issues.
 
