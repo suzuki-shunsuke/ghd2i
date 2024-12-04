@@ -17,7 +17,39 @@ func (c *Client) GetDiscussion(ctx context.Context, owner, name string, number i
 	if err := c.v4Client.Query(ctx, q, variables); err != nil {
 		return nil, fmt.Errorf("get a discussion by GitHub GraphQL API: %w", err)
 	}
+
+	if q.Repository.Discussion.Comments.PageInfo.HasNextPage {
+		for range 10 {
+			comments, err := c.SearchComments(ctx, owner, name, number, q.Repository.Discussion.Comments.PageInfo.EndCursor)
+			if err != nil {
+				return nil, fmt.Errorf("search discussion comments by GitHub GraphQL API: %w", err)
+			}
+			q.Repository.Discussion.Comments.Nodes = append(q.Repository.Discussion.Comments.Nodes, comments...)
+		}
+	}
 	return q.Repository.Discussion, nil
+}
+
+func (c *Client) SearchComments(ctx context.Context, owner, name string, number int, cursor string) ([]*Comment, error) {
+	var comments []*Comment
+	variables := map[string]any{
+		"repoOwner": githubv4.String(owner),
+		"repoName":  githubv4.String(name),
+		"number":    githubv4.Int(number), //nolint:gosec
+		"cursor":    cursor,
+	}
+	for range 10 {
+		q := &SearchCommentQuery{}
+		if err := c.v4Client.Query(ctx, q, variables); err != nil {
+			return nil, fmt.Errorf("search discussion comments by GitHub GraphQL API: %w", err)
+		}
+		comments = append(comments, q.Repository.Discussion.Comments.Nodes...)
+		if !q.Repository.Discussion.Comments.PageInfo.HasNextPage {
+			return comments, nil
+		}
+		variables["cursor"] = q.Repository.Discussion.Comments.PageInfo.HasNextPage
+	}
+	return nil, nil
 }
 
 func (c *Client) SearchDiscussions(ctx context.Context, query string) ([]string, error) {

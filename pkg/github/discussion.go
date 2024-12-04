@@ -130,6 +130,14 @@ type Category struct {
 	Emoji string
 }
 
+type SearchCommentQuery struct {
+	Repository struct {
+		Discussion struct {
+			Comments *Comments `graphql:"comments(first:100, after: $cursor)"`
+		}
+	} `graphql:"repository(owner: $repoOwner, name: $repoName)"`
+}
+
 type Discussion struct {
 	ID             string
 	Title          string
@@ -182,6 +190,7 @@ type Reaction struct {
 
 type Comments struct {
 	TotalCount int
+	PageInfo   *PageInfo
 	Nodes      []*Comment
 }
 
