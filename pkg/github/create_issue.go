@@ -97,8 +97,10 @@ func (c *Client) LockIssue(ctx context.Context, owner, name string, number int, 
 
 func (c *Client) CloseDiscussion(ctx context.Context, id string, reason githubv4.DiscussionCloseReason) error {
 	var m struct {
-		Discussion struct {
-			ID string
+		CloseDiscussion struct {
+			Discussion struct {
+				ID string
+			}
 		} `graphql:"closeDiscussion(input:$input)"`
 	}
 
@@ -114,8 +116,10 @@ func (c *Client) CloseDiscussion(ctx context.Context, id string, reason githubv4
 
 func (c *Client) LockDiscussion(ctx context.Context, id string) error {
 	var m struct {
-		Discussion struct {
-			ID string
+		LockLockable struct {
+			LockedRecord struct {
+				Locked bool
+			}
 		} `graphql:"lockLockable(input:$input)"`
 	}
 
