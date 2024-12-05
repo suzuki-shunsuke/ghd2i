@@ -215,15 +215,16 @@ type Replies struct {
 }
 
 type Reply struct {
-	ID          string
-	Body        string
-	URL         string
-	UpvoteCount int
-	Reactions   *Reactions `graphql:"reactions(first:100)"`
-	Author      *User
-	CreatedAt   string
-	IsAnswer    bool
-	IsMinimized bool
+	ID              string
+	Body            string
+	URL             string
+	MinimizedReason string
+	CreatedAt       string
+	UpvoteCount     int
+	Reactions       *Reactions `graphql:"reactions(first:100)"`
+	Author          *User
+	IsAnswer        bool
+	IsMinimized     bool
 }
 
 type SearchDiscussionReactionsQuery struct {
