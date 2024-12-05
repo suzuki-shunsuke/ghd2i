@@ -232,6 +232,24 @@ e.g.
 ghd2i run -lock never -close always <discussion url>
 ```
 
+## Close and lock and post a comment to Discussions
+
+After creating issues, ghd2i can close and lock and post a comment to Discussions.
+
+To close and lock discussion, you can use `-lock-discussion` and `-close-discussion` options.
+
+```sh
+ghd2i run -lock-discussion -close-discussion
+```
+
+To post a coment to discussions, you need a configuration file.
+
+```yaml
+dicussion_comment_template: |
+  This discussion is closed and locked because we migrate Discussions to Issues.
+  {{.Issue.URL}}
+```
+
 ## Add labels and assignees
 
 You can use `-label (-l)` and `-assignee (-a)` options.
@@ -246,9 +264,7 @@ GitHub provides a Web UI to create an issue from a discussion.
 
 <img width="254" alt="image" src="https://github.com/user-attachments/assets/2899fc15-3c6b-4ea0-8d3a-65d162032c67">
 
-But we think this feature is very poor.
-
-This feature doesn't create issue comments from discussion comments and replies.
+But this feature doesn't create issue comments from discussion comments and replies.
 
 So we've developed ghd2i.
 
