@@ -34,9 +34,10 @@ type Param struct {
 }
 
 type Config struct {
-	Title           string
-	IssueTemplate   string `yaml:"issue_template"`
-	CommentTemplate string `yaml:"comment_template"`
+	Title                     string
+	IssueTemplate             string `yaml:"issue_template"`
+	CommentTemplate           string `yaml:"comment_template"`
+	DiscussionCommentTemplate string `yaml:"discussion_comment_template"`
 }
 
 type GitHub interface {
@@ -49,6 +50,7 @@ type GitHub interface {
 	SearchDiscussions(ctx context.Context, query string) ([]string, error)
 	CloseDiscussion(ctx context.Context, id string, reason githubv4.DiscussionCloseReason) error
 	LockDiscussion(ctx context.Context, id string) error
+	CreateDiscussionComment(ctx context.Context, id, body string) error
 }
 
 type ParamDiscussion struct {
@@ -142,6 +144,13 @@ func (c *Controller) parseTemplates(cfg *Config) error {
 			return fmt.Errorf("parse a title template in the configuration file: %w", err)
 		}
 		c.title = title
+	}
+	if cfg.DiscussionCommentTemplate != "" {
+		s, err := parseTemplate(cfg.DiscussionCommentTemplate)
+		if err != nil {
+			return fmt.Errorf("parse a discussion comment template in the configuration file: %w", err)
+		}
+		c.discussionComment = s
 	}
 	return nil
 }
@@ -256,6 +265,23 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 	if param.LockDiscussion && !discussion.Locked {
 		if err := c.gh.LockDiscussion(ctx, discussion.ID); err != nil {
 			return fmt.Errorf("lock a discussion: %w", err)
+		}
+	}
+	if c.discussionComment != nil {
+		// Post a comment to the discussion.
+		discussionComment := &bytes.Buffer{}
+		if err := c.discussionComment.Execute(discussionComment, map[string]any{
+			"Discussion": discussion,
+			"Issue": map[string]any{
+				"Title":  title,
+				"URL":    issueURL,
+				"Number": issueNum,
+			},
+		}); err != nil {
+			return fmt.Errorf("render a discussion comment using a template engine: %w", err)
+		}
+		if err := c.gh.CreateDiscussionComment(ctx, discussion.ID, discussionComment.String()); err != nil {
+			return fmt.Errorf("create a discussion comment: %w", err)
 		}
 	}
 	// Close and lock the issue if necessary.

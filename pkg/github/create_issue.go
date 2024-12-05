@@ -131,3 +131,22 @@ func (c *Client) LockDiscussion(ctx context.Context, id string) error {
 	}
 	return nil
 }
+
+func (c *Client) CreateDiscussionComment(ctx context.Context, id, body string) error {
+	var m struct {
+		AddDiscussionComment struct {
+			Comment struct {
+				ID string
+			}
+		} `graphql:"addDiscussionComment(input:$input)"`
+	}
+
+	input := githubv4.AddDiscussionCommentInput{
+		DiscussionID: id,
+		Body:         githubv4.String(body),
+	}
+	if err := c.v4Client.Mutate(ctx, &m, input, nil); err != nil {
+		return fmt.Errorf("create a discussion comment: %w", err)
+	}
+	return nil
+}
