@@ -36,7 +36,20 @@ func (c *Client) CreateIssueComment(ctx context.Context, owner, name string, num
 	return comment.GetNodeID(), nil
 }
 
-func (c *Client) MinimizeComment(ctx context.Context, nodeID string) error {
+func GetMinimizedReason(reason string) (githubv4.ReportedContentClassifiers, bool) {
+	reasons := map[string]githubv4.ReportedContentClassifiers{
+		"spam":      githubv4.ReportedContentClassifiersSpam,
+		"abuse":     githubv4.ReportedContentClassifiersAbuse,
+		"off-topic": githubv4.ReportedContentClassifiersOffTopic,
+		"outdated":  githubv4.ReportedContentClassifiersOutdated,
+		"duplicate": githubv4.ReportedContentClassifiersDuplicate,
+		"resolved":  githubv4.ReportedContentClassifiersResolved,
+	}
+	a, ok := reasons[reason]
+	return a, ok
+}
+
+func (c *Client) MinimizeComment(ctx context.Context, nodeID string, minimizedReason githubv4.ReportedContentClassifiers) error {
 	// minimizeComment
 	// https://docs.github.com/en/graphql/reference/mutations#minimizecomment
 	var m struct {
@@ -48,8 +61,9 @@ func (c *Client) MinimizeComment(ctx context.Context, nodeID string) error {
 			}
 		} `graphql:"minimizeComment(input:$input)"`
 	}
+
 	input := githubv4.MinimizeCommentInput{
-		Classifier: githubv4.ReportedContentClassifiersOutdated,
+		Classifier: minimizedReason,
 		SubjectID:  nodeID,
 	}
 	if err := c.v4Client.Mutate(ctx, &m, input, nil); err != nil {

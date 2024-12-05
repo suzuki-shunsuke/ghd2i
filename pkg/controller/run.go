@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/shurcooL/githubv4"
 	"github.com/sirupsen/logrus"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/github"
 	"github.com/suzuki-shunsuke/logrus-error/logerr"
@@ -40,7 +41,7 @@ type GitHub interface {
 	GetDiscussion(ctx context.Context, owner, name string, number int) (*github.Discussion, error)
 	CreateIssue(ctx context.Context, owner, repo string, req *github.IssueRequest) (int, string, error)
 	CreateIssueComment(ctx context.Context, owner, name string, number int, req *github.IssueComment) (string, error)
-	MinimizeComment(ctx context.Context, nodeID string) error
+	MinimizeComment(ctx context.Context, nodeID string, minimizedReason githubv4.ReportedContentClassifiers) error
 	LockIssue(ctx context.Context, owner, name string, number int, lockReason string) error
 	CloseIssue(ctx context.Context, owner, name string, number int) error
 	SearchDiscussions(ctx context.Context, query string) ([]string, error)
@@ -163,7 +164,7 @@ func parseArg(arg string) (*ParamDiscussion, error) {
 	}, nil
 }
 
-func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, discussion *Discussion) error { //nolint:funlen,cyclop
+func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, discussion *Discussion) error { //nolint:funlen,cyclop,gocognit
 	// Render issue and comments based on templates.
 	buf := &bytes.Buffer{}
 	if err := c.issueBody.Execute(buf, discussion); err != nil {
@@ -225,7 +226,12 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 			return fmt.Errorf("create a comment: %w", err)
 		}
 		if comment.IsMinimized {
-			if err := c.gh.MinimizeComment(ctx, commentID); err != nil {
+			reason, ok := github.GetMinimizedReason(comment.MinimizedReason)
+			if !ok {
+				logE.WithField("minimized_reason", comment.MinimizedReason).Warn("unknown minimized reason")
+				reason = githubv4.ReportedContentClassifiersResolved
+			}
+			if err := c.gh.MinimizeComment(ctx, commentID, reason); err != nil {
 				logerr.WithError(logE, err).WithField("comment_id", commentID).Warn("minimize a comment")
 			}
 		}
