@@ -181,6 +181,7 @@ type User struct {
 
 type Reactions struct {
 	TotalCount int
+	PageInfo   *PageInfo
 	Nodes      []*Reaction
 }
 
@@ -222,4 +223,12 @@ type Reply struct {
 	CreatedAt   string
 	IsAnswer    bool
 	IsMinimized bool
+}
+
+type SearchDiscussionReactionsQuery struct {
+	Repository struct {
+		Discussion struct {
+			Reactions *Reactions `graphql:"reactions(first:100, after: $cursor)"`
+		}
+	} `graphql:"repository(owner: $repoOwner, name: $repoName)"`
 }
