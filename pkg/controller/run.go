@@ -34,9 +34,10 @@ type Param struct {
 }
 
 type Config struct {
-	Title           string
-	IssueTemplate   string `yaml:"issue_template"`
-	CommentTemplate string `yaml:"comment_template"`
+	Title                     string
+	IssueTemplate             string `yaml:"issue_template"`
+	CommentTemplate           string `yaml:"comment_template"`
+	DiscussionCommentTemplate string `yaml:"discussion_comment_template"`
 }
 
 type GitHub interface {
@@ -49,6 +50,7 @@ type GitHub interface {
 	SearchDiscussions(ctx context.Context, query string) ([]string, error)
 	CloseDiscussion(ctx context.Context, id string, reason githubv4.DiscussionCloseReason) error
 	LockDiscussion(ctx context.Context, id string) error
+	CreateDiscussionComment(ctx context.Context, id, body string) error
 }
 
 type ParamDiscussion struct {
@@ -143,6 +145,13 @@ func (c *Controller) parseTemplates(cfg *Config) error {
 		}
 		c.title = title
 	}
+	if cfg.DiscussionCommentTemplate != "" {
+		s, err := parseTemplate(cfg.DiscussionCommentTemplate)
+		if err != nil {
+			return fmt.Errorf("parse a discussion comment template in the configuration file: %w", err)
+		}
+		c.discussionComment = s
+	}
 	return nil
 }
 
@@ -227,24 +236,18 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 	if err != nil {
 		return fmt.Errorf("create an Issue: %w", err)
 	}
+	issue := &Issue{
+		RepoOwner: repoOwner,
+		RepoName:  repoName,
+		Title:     title,
+		URL:       issueURL,
+		Number:    issueNum,
+	}
 	logE.WithField("issue_url", issueURL).Info("created an issue")
 	// Create issue comments by GitHub GraphQL API.
 	for i, comment := range discussion.Comments {
-		commentID, err := c.gh.CreateIssueComment(ctx, repoOwner, repoName, issueNum, &github.IssueComment{
-			Body: &comments[i],
-		})
-		if err != nil {
-			return fmt.Errorf("create a comment: %w", err)
-		}
-		if comment.IsMinimized {
-			reason, ok := github.GetMinimizedReason(comment.MinimizedReason)
-			if !ok {
-				logE.WithField("minimized_reason", comment.MinimizedReason).Warn("unknown minimized reason")
-				reason = githubv4.ReportedContentClassifiersResolved
-			}
-			if err := c.gh.MinimizeComment(ctx, commentID, reason); err != nil {
-				logerr.WithError(logE, err).WithField("comment_id", commentID).Warn("minimize a comment")
-			}
+		if err := c.handleDiscussionComment(ctx, logE, issue, comment, comments[i]); err != nil {
+			return err
 		}
 	}
 	// Close and lock discussion if necessary.
@@ -256,6 +259,12 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 	if param.LockDiscussion && !discussion.Locked {
 		if err := c.gh.LockDiscussion(ctx, discussion.ID); err != nil {
 			return fmt.Errorf("lock a discussion: %w", err)
+		}
+	}
+	if c.discussionComment != nil {
+		// Post a comment to the discussion.
+		if err := c.postCommentToDiscussion(ctx, discussion, issue); err != nil {
+			return err
 		}
 	}
 	// Close and lock the issue if necessary.
@@ -272,6 +281,29 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 	return nil
 }
 
+type Issue struct {
+	RepoOwner string
+	RepoName  string
+	Title     string
+	URL       string
+	Number    int
+}
+
+func (c *Controller) postCommentToDiscussion(ctx context.Context, discussion *Discussion, issue *Issue) error {
+	// Post a comment to the discussion.
+	discussionComment := &bytes.Buffer{}
+	if err := c.discussionComment.Execute(discussionComment, map[string]any{
+		"Discussion": discussion,
+		"Issue":      issue,
+	}); err != nil {
+		return fmt.Errorf("render a discussion comment using a template engine: %w", err)
+	}
+	if err := c.gh.CreateDiscussionComment(ctx, discussion.ID, discussionComment.String()); err != nil {
+		return fmt.Errorf("create a discussion comment: %w", err)
+	}
+	return nil
+}
+
 func (c *Controller) readData(dataFilePath string, discussions *Discussions) error {
 	// read data file
 	f, err := c.fs.Open(dataFilePath)
@@ -281,6 +313,26 @@ func (c *Controller) readData(dataFilePath string, discussions *Discussions) err
 	defer f.Close()
 	if err := json.NewDecoder(f).Decode(discussions); err != nil {
 		return fmt.Errorf("read a data file as JSON: %w", err)
+	}
+	return nil
+}
+
+func (c *Controller) handleDiscussionComment(ctx context.Context, logE *logrus.Entry, issue *Issue, comment *Comment, body string) error {
+	commentID, err := c.gh.CreateIssueComment(ctx, issue.RepoOwner, issue.RepoName, issue.Number, &github.IssueComment{
+		Body: &body,
+	})
+	if err != nil {
+		return fmt.Errorf("create a comment: %w", err)
+	}
+	if comment.IsMinimized {
+		reason, ok := github.GetMinimizedReason(comment.MinimizedReason)
+		if !ok {
+			logE.WithField("minimized_reason", comment.MinimizedReason).Warn("unknown minimized reason")
+			reason = githubv4.ReportedContentClassifiersResolved
+		}
+		if err := c.gh.MinimizeComment(ctx, commentID, reason); err != nil {
+			logerr.WithError(logE, err).WithField("comment_id", commentID).Warn("minimize a comment")
+		}
 	}
 	return nil
 }

@@ -8,12 +8,13 @@ import (
 )
 
 type Controller struct {
-	stdout           io.Writer
-	gh               GitHub
-	fs               afero.Fs
-	issueBody        *template.Template
-	issueCommentBody *template.Template
-	title            *template.Template
+	stdout            io.Writer
+	gh                GitHub
+	fs                afero.Fs
+	issueBody         *template.Template
+	issueCommentBody  *template.Template
+	title             *template.Template
+	discussionComment *template.Template
 }
 
 func New(stdout io.Writer, gh GitHub, fs afero.Fs) (*Controller, error) {
