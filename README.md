@@ -245,7 +245,7 @@ ghd2i run -lock-discussion -close-discussion
 To post a coment to discussions, you need a configuration file.
 
 ```yaml
-dicussion_comment_template: |
+discussion_comment_template: |
   This discussion is closed and locked because we migrate Discussions to Issues.
   {{.Issue.URL}}
 ```
