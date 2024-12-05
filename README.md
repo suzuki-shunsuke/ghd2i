@@ -242,7 +242,7 @@ To close and lock discussion, you can use `-lock-discussion` and `-close-discuss
 ghd2i run -lock-discussion -close-discussion
 ```
 
-To post a coment to discussions, you need a configuration file.
+To post a comment to discussions, you need a configuration file.
 
 ```yaml
 discussion_comment_template: |
