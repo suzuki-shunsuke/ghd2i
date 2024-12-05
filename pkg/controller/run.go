@@ -18,17 +18,19 @@ import (
 )
 
 type Param struct {
-	ConfigFilePath string
-	DataFilePath   string
-	Close          string
-	Lock           string
-	RepoOwner      string
-	RepoName       string
-	Query          string
-	Args           []string
-	Labels         []string
-	Assignees      []string
-	DryRun         bool
+	ConfigFilePath  string
+	DataFilePath    string
+	Close           string
+	Lock            string
+	RepoOwner       string
+	RepoName        string
+	Query           string
+	Args            []string
+	Labels          []string
+	Assignees       []string
+	DryRun          bool
+	LockDiscussion  bool
+	CloseDiscussion bool
 }
 
 type Config struct {
@@ -45,6 +47,8 @@ type GitHub interface {
 	LockIssue(ctx context.Context, owner, name string, number int, lockReason string) error
 	CloseIssue(ctx context.Context, owner, name string, number int) error
 	SearchDiscussions(ctx context.Context, query string) ([]string, error)
+	CloseDiscussion(ctx context.Context, id string, reason githubv4.DiscussionCloseReason) error
+	LockDiscussion(ctx context.Context, id string) error
 }
 
 type ParamDiscussion struct {
@@ -241,6 +245,17 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 			if err := c.gh.MinimizeComment(ctx, commentID, reason); err != nil {
 				logerr.WithError(logE, err).WithField("comment_id", commentID).Warn("minimize a comment")
 			}
+		}
+	}
+	// Close and lock discussion if necessary.
+	if param.CloseDiscussion && !discussion.Closed {
+		if err := c.gh.CloseDiscussion(ctx, discussion.ID, githubv4.DiscussionCloseReasonOutdated); err != nil {
+			return fmt.Errorf("close a discussion: %w", err)
+		}
+	}
+	if param.LockDiscussion && !discussion.Locked {
+		if err := c.gh.LockDiscussion(ctx, discussion.ID); err != nil {
+			return fmt.Errorf("lock a discussion: %w", err)
 		}
 	}
 	// Close and lock the issue if necessary.
