@@ -11,7 +11,7 @@
 ## Replies
 {{range .Replies}}
 {{if .IsMinimized}}
-<details><summary>This reply was minimized</summary>
+<details><summary>This reply was marked as {{.MinimizedReason}}</summary>
 {{end}}
 {{if .IsAnswer}}
 # ✅ Mark as Answer

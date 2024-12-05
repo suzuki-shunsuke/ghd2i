@@ -225,16 +225,17 @@ type Reaction struct {
 }
 
 type Comment struct {
-	ID          string
-	Body        string
-	URL         string
-	Author      *github.User
-	CreatedAt   string
-	Reactions   map[string]*Reaction
-	Replies     []*Reply
-	UpvoteCount int
-	IsAnswer    bool
-	IsMinimized bool
+	ID              string
+	Body            string
+	URL             string
+	CreatedAt       string
+	MinimizedReason string
+	UpvoteCount     int
+	Author          *github.User
+	Reactions       map[string]*Reaction
+	Replies         []*Reply
+	IsAnswer        bool
+	IsMinimized     bool
 }
 
 func convertComments(in *github.Comments) []*Comment {
@@ -244,31 +245,33 @@ func convertComments(in *github.Comments) []*Comment {
 	comments := []*Comment{}
 	for _, n := range in.Nodes {
 		comments = append(comments, &Comment{
-			ID:          n.ID,
-			Body:        n.Body,
-			URL:         n.URL,
-			Author:      n.Author,
-			CreatedAt:   n.CreatedAt,
-			Reactions:   convertReactions(n.Reactions),
-			Replies:     convertReplies(n.Replies),
-			UpvoteCount: n.UpvoteCount,
-			IsAnswer:    n.IsAnswer,
-			IsMinimized: n.IsMinimized,
+			ID:              n.ID,
+			Body:            n.Body,
+			URL:             n.URL,
+			Author:          n.Author,
+			CreatedAt:       n.CreatedAt,
+			MinimizedReason: n.MinimizedReason,
+			Reactions:       convertReactions(n.Reactions),
+			Replies:         convertReplies(n.Replies),
+			UpvoteCount:     n.UpvoteCount,
+			IsAnswer:        n.IsAnswer,
+			IsMinimized:     n.IsMinimized,
 		})
 	}
 	return comments
 }
 
 type Reply struct {
-	ID          string
-	Body        string
-	URL         string
-	UpvoteCount int
-	Reactions   map[string]*Reaction
-	Author      *github.User
-	CreatedAt   string
-	IsAnswer    bool
-	IsMinimized bool
+	ID              string
+	Body            string
+	URL             string
+	CreatedAt       string
+	MinimizedReason string
+	UpvoteCount     int
+	Reactions       map[string]*Reaction
+	Author          *github.User
+	IsAnswer        bool
+	IsMinimized     bool
 }
 
 func convertReplies(in *github.Replies) []*Reply {
@@ -278,15 +281,16 @@ func convertReplies(in *github.Replies) []*Reply {
 	replies := make([]*Reply, len(in.Nodes))
 	for i, n := range in.Nodes {
 		replies[i] = &Reply{
-			ID:          n.ID,
-			Body:        n.Body,
-			URL:         n.URL,
-			UpvoteCount: n.UpvoteCount,
-			Reactions:   convertReactions(n.Reactions),
-			Author:      n.Author,
-			CreatedAt:   n.CreatedAt,
-			IsAnswer:    n.IsAnswer,
-			IsMinimized: n.IsMinimized,
+			ID:              n.ID,
+			Body:            n.Body,
+			URL:             n.URL,
+			MinimizedReason: n.MinimizedReason,
+			UpvoteCount:     n.UpvoteCount,
+			Reactions:       convertReactions(n.Reactions),
+			Author:          n.Author,
+			CreatedAt:       n.CreatedAt,
+			IsAnswer:        n.IsAnswer,
+			IsMinimized:     n.IsMinimized,
 		}
 	}
 	return replies
