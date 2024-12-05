@@ -167,13 +167,18 @@ func parseArg(arg string) (*ParamDiscussion, error) {
 func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, discussion *Discussion) error { //nolint:funlen,cyclop,gocognit
 	// Render issue and comments based on templates.
 	buf := &bytes.Buffer{}
-	if err := c.issueBody.Execute(buf, discussion); err != nil {
+	if err := c.issueBody.Execute(buf, map[string]any{
+		"Discussion": discussion,
+	}); err != nil {
 		return fmt.Errorf("render an issue body using a template engine: %w", err)
 	}
 	comments := make([]string, len(discussion.Comments))
 	for i, comment := range discussion.Comments {
 		buf := &bytes.Buffer{}
-		if err := c.issueCommentBody.Execute(buf, comment); err != nil {
+		if err := c.issueCommentBody.Execute(buf, map[string]any{
+			"Discussion": discussion,
+			"Comment":    comment,
+		}); err != nil {
 			return fmt.Errorf("render an issue comment body using a template engine: %w", err)
 		}
 		comments[i] = buf.String()
@@ -187,7 +192,9 @@ func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, 
 	title := discussion.Title
 	if c.title != nil {
 		buf := &bytes.Buffer{}
-		if err := c.title.Execute(buf, discussion); err != nil {
+		if err := c.title.Execute(buf, map[string]any{
+			"Discussion": discussion,
+		}); err != nil {
 			return fmt.Errorf("render an issue title using a template engine: %w", err)
 		}
 		title = buf.String()
