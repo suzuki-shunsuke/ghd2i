@@ -164,7 +164,7 @@ func parseArg(arg string) (*ParamDiscussion, error) {
 	}, nil
 }
 
-func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, discussion *Discussion) error { //nolint:funlen,cyclop
+func (c *Controller) run(ctx context.Context, logE *logrus.Entry, param *Param, discussion *Discussion) error { //nolint:funlen,cyclop,gocognit
 	// Render issue and comments based on templates.
 	buf := &bytes.Buffer{}
 	if err := c.issueBody.Execute(buf, discussion); err != nil {
