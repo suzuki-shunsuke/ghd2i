@@ -1,20 +1,20 @@
-{{if .Answer}}
-✅ Answered by [{{.Answer.Author.Login}}](https://github.com/{{.Answer.Author.Login}}) <a href="#{{.Answer.ID}}">Answer</a>
+{{if .Discussion.Answer}}
+✅ Answered by [{{.Discussion.Answer.Author.Login}}](https://github.com/{{.Discussion.Answer.Author.Login}}) <a href="#{{.Discussion.Answer.ID}}">Answer</a>
 {{end}}
 
-<img width="32" alt="image" src="{{.Author.AvatarURL}}"> [{{.Author.Login}}](https://github.com/{{.Author.Login}}) {{.CreatedAt}} ⬆️ {{.UpvoteCount}} {{range .Reactions}}{{.Emoji}} {{.Count}} {{end}}
+<img width="32" alt="image" src="{{.Discussion.Author.AvatarURL}}"> [{{.Discussion.Author.Login}}](https://github.com/{{.Discussion.Author.Login}}) {{.Discussion.CreatedAt}} ⬆️ {{.Discussion.UpvoteCount}} {{range .Discussion.Reactions}}{{.Emoji}} {{.Count}} {{end}}
 
-[Original Discussion]({{.URL}})
-Category: {{.Category.Emoji}} {{.Category.Name}}
+[Original Discussion]({{.Discussion.URL}})
+Category: {{.Discussion.Category.Emoji}} {{.Discussion.Category.Name}}
 
-{{.Body}}
+{{.Discussion.Body}}
 
-{{if .Poll}}
-## {{.Category.Emoji}} {{.Poll.Question}}
+{{if .Discussion.Poll}}
+## {{.Discussion.Category.Emoji}} {{.Discussion.Poll.Question}}
 
 Poll Option | Vote Count
 --- | ---
-{{range .Poll.Options -}}
+{{range .Discussion.Poll.Options -}}
 {{.Option}} | {{.TotalVoteCount}}
 {{end}}
 {{end}}
