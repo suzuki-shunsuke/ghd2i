@@ -47,7 +47,7 @@ func (c *Client) SearchComments(ctx context.Context, owner, name string, number 
 		"number":    githubv4.Int(number), //nolint:gosec
 		"cursor":    cursor,
 	}
-	for range 10 {
+	for range 100 {
 		q := &SearchCommentQuery{}
 		if err := c.v4Client.Query(ctx, q, variables); err != nil {
 			return nil, fmt.Errorf("search discussion comments by GitHub GraphQL API: %w", err)

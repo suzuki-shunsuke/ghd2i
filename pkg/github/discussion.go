@@ -133,7 +133,7 @@ type Category struct {
 type SearchCommentQuery struct {
 	Repository struct {
 		Discussion struct {
-			Comments *Comments `graphql:"comments(first:100, after: $cursor)"`
+			Comments *Comments `graphql:"comments(first:10, after: $cursor)"`
 		}
 	} `graphql:"repository(owner: $repoOwner, name: $repoName)"`
 }
@@ -155,7 +155,7 @@ type Discussion struct {
 	AnswerChosenAt string
 	Answer         *Answer
 	Category       *Category
-	Comments       *Comments `graphql:"comments(first:100)"`
+	Comments       *Comments `graphql:"comments(first:10)"`
 	Poll           *Poll
 }
 
@@ -201,7 +201,7 @@ type Comment struct {
 	URL         string
 	Author      *User
 	CreatedAt   string
-	Reactions   *Reactions `graphql:"reactions(first:10)"`
+	Reactions   *Reactions `graphql:"reactions(first:100)"`
 	Replies     *Replies   `graphql:"replies(first:100)"`
 	UpvoteCount int
 	IsAnswer    bool
@@ -218,7 +218,7 @@ type Reply struct {
 	Body        string
 	URL         string
 	UpvoteCount int
-	Reactions   *Reactions `graphql:"reactions(first:10)"`
+	Reactions   *Reactions `graphql:"reactions(first:100)"`
 	Author      *User
 	CreatedAt   string
 	IsAnswer    bool
