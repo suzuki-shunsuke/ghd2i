@@ -94,3 +94,36 @@ func (c *Client) LockIssue(ctx context.Context, owner, name string, number int, 
 	}
 	return nil
 }
+
+func (c *Client) CloseDiscussion(ctx context.Context, id string, reason githubv4.DiscussionCloseReason) error {
+	var m struct {
+		Discussion struct {
+			ID string
+		} `graphql:"closeDiscussion(input:$input)"`
+	}
+
+	input := githubv4.CloseDiscussionInput{
+		DiscussionID: id,
+		Reason:       &reason,
+	}
+	if err := c.v4Client.Mutate(ctx, &m, input, nil); err != nil {
+		return fmt.Errorf("close a discussion: %w", err)
+	}
+	return nil
+}
+
+func (c *Client) LockDiscussion(ctx context.Context, id string) error {
+	var m struct {
+		Discussion struct {
+			ID string
+		} `graphql:"lockLockable(input:$input)"`
+	}
+
+	input := githubv4.LockLockableInput{
+		LockableID: id,
+	}
+	if err := c.v4Client.Mutate(ctx, &m, input, nil); err != nil {
+		return fmt.Errorf("lock a discussion: %w", err)
+	}
+	return nil
+}

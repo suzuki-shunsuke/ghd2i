@@ -84,6 +84,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{steps.token.outputs.token}}
 
+      - name: Test -lock-discussion and -close-discussion options
+        run: ghd2i run -lock-discussion -close-discussion https://github.com/suzuki-shunsuke/test-ghd2i/discussions/102
+        if: |
+          !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+        env:
+          GITHUB_TOKEN: ${{steps.token.outputs.token}}
+
       - name: Test create-config
         run: ghd2i create-config
       - run: cat ghd2i.yaml

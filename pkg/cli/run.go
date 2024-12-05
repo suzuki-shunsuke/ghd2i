@@ -18,7 +18,7 @@ type runCommand struct {
 	stdout io.Writer
 }
 
-func (rc *runCommand) command() *cli.Command {
+func (rc *runCommand) command() *cli.Command { //nolint:funlen
 	return &cli.Command{
 		Name:  "run",
 		Usage: "Create GitHub Issues from GitHub Discussions",
@@ -36,6 +36,14 @@ $ ghd2i run https://github.com/suzuki-shunsuke/test-github-action/discussions/55
 			&cli.StringFlag{
 				Name:  "data",
 				Usage: "data file path. If data file path is set, the data is read from the file instead of calling GitHub API",
+			},
+			&cli.BoolFlag{
+				Name:  "lock-discussion",
+				Usage: "Lock discussions",
+			},
+			&cli.BoolFlag{
+				Name:  "close-discussion",
+				Usage: "Close discussions",
 			},
 			&cli.StringFlag{
 				Name:  "lock",
@@ -88,16 +96,18 @@ func (rc *runCommand) action(c *cli.Context) error {
 		return fmt.Errorf("initialize a controller: %w", err)
 	}
 	return ctrl.Run(c.Context, logE, &controller.Param{ //nolint:wrapcheck
-		ConfigFilePath: c.String("config"),
-		DataFilePath:   c.String("data"),
-		Close:          c.String("close"),
-		Lock:           c.String("lock"),
-		RepoOwner:      c.String("repo-owner"),
-		RepoName:       c.String("repo-name"),
-		Query:          c.String("query"),
-		Labels:         c.StringSlice("label"),
-		Assignees:      c.StringSlice("assignee"),
-		DryRun:         c.Bool("dry-run"),
-		Args:           c.Args().Slice(),
+		ConfigFilePath:  c.String("config"),
+		DataFilePath:    c.String("data"),
+		Close:           c.String("close"),
+		Lock:            c.String("lock"),
+		RepoOwner:       c.String("repo-owner"),
+		RepoName:        c.String("repo-name"),
+		Query:           c.String("query"),
+		Labels:          c.StringSlice("label"),
+		Assignees:       c.StringSlice("assignee"),
+		DryRun:          c.Bool("dry-run"),
+		CloseDiscussion: c.Bool("close-discussion"),
+		LockDiscussion:  c.Bool("lock-discussion"),
+		Args:            c.Args().Slice(),
 	})
 }
