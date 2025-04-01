@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/controller"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/github"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 type getDiscussionCommand struct {

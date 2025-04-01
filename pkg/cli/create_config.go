@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/afero"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/controller"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 type createConfigCommand struct {

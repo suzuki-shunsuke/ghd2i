@@ -10,7 +10,7 @@ import (
 	"github.com/suzuki-shunsuke/ghd2i/pkg/controller"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/github"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/log"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 type runCommand struct {
