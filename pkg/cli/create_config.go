@@ -1,12 +1,13 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"io"
 
 	"github.com/spf13/afero"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/controller"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 type createConfigCommand struct {
@@ -25,7 +26,7 @@ $ ghd2i create-config
 	}
 }
 
-func (rc *createConfigCommand) action(_ *cli.Context) error {
+func (rc *createConfigCommand) action(_ context.Context, _ *cli.Command) error {
 	ctrl, err := controller.New(rc.stdout, nil, afero.NewOsFs())
 	if err != nil {
 		return fmt.Errorf("initialize a controller: %w", err)

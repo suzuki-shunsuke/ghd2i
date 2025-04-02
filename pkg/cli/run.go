@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -10,7 +11,7 @@ import (
 	"github.com/suzuki-shunsuke/ghd2i/pkg/controller"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/github"
 	"github.com/suzuki-shunsuke/ghd2i/pkg/log"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 type runCommand struct {
@@ -86,16 +87,16 @@ $ ghd2i run https://github.com/suzuki-shunsuke/test-github-action/discussions/55
 	}
 }
 
-func (rc *runCommand) action(c *cli.Context) error {
+func (rc *runCommand) action(ctx context.Context, c *cli.Command) error {
 	logE := rc.logE
 	log.SetLevel(c.String("log-level"), logE)
 	log.SetColor(c.String("log-color"), logE)
-	gh := github.New(c.Context, os.Getenv("GITHUB_TOKEN"))
+	gh := github.New(ctx, os.Getenv("GITHUB_TOKEN"))
 	ctrl, err := controller.New(rc.stdout, gh, afero.NewOsFs())
 	if err != nil {
 		return fmt.Errorf("initialize a controller: %w", err)
 	}
-	return ctrl.Run(c.Context, logE, &controller.Param{ //nolint:wrapcheck
+	return ctrl.Run(ctx, logE, &controller.Param{ //nolint:wrapcheck
 		ConfigFilePath:  c.String("config"),
 		DataFilePath:    c.String("data"),
 		Close:           c.String("close"),
