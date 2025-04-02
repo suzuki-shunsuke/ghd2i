@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -27,7 +28,7 @@ func (vc *versionCommand) command() *cli.Command {
 	}
 }
 
-func (vc *versionCommand) action(c *cli.Context) error {
+func (vc *versionCommand) action(_ context.Context, c *cli.Command) error {
 	if !c.Bool("json") {
 		cli.ShowVersion(c)
 		return nil

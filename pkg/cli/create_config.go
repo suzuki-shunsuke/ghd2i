@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -25,7 +26,7 @@ $ ghd2i create-config
 	}
 }
 
-func (rc *createConfigCommand) action(_ *cli.Context) error {
+func (rc *createConfigCommand) action(_ context.Context, _ *cli.Command) error {
 	ctrl, err := controller.New(rc.stdout, nil, afero.NewOsFs())
 	if err != nil {
 		return fmt.Errorf("initialize a controller: %w", err)
